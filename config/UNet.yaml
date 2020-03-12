@@ -1,0 +1,19 @@
+default: &DEFAULT
+
+
+  weight_init: {conv_init: 'normal', conv_scale: 0.02, conv_bias: 0.}
+
+  lr: 1E-4
+
+  data_path: '/global/cscratch1/sd/pharring/hydro/training/pytorch/data/trdata_0.h5'
+  ngpu: 1 
+  num_epochs: 2
+  num_data_workers: 2
+  LAMBDA_2: 1E-2
+  data_size: 256
+  N_out_channels: 5
+  batch_size: 1
+
+multi8: 
+  <<: *DEFAULT
+  ngpu: 8

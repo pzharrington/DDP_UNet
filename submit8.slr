@@ -1,0 +1,18 @@
+#!/bin/bash -l
+#SBATCH --nodes=1  --time=08:00:00  
+#SBATCH -C gpu 
+#SBATCH --account m1759
+#SBATCH --gres=gpu:8
+#SBATCH --exclusive
+#SBATCH -c 80
+#SBATCH -J multi8
+#SBATCH -o %x-%j.out
+
+module load pytorch/v1.4.0-gpu
+
+# Start training
+export HDF5_USE_FILE_LOCKING=FALSE
+srun python -m torch.distributed.launch --nproc_per_node=8 train.py --run_num=14 --config=multi8
+
+date
+
