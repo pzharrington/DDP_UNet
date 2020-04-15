@@ -12,14 +12,14 @@ export HDF5_USE_FILE_LOCKING=FALSE
 
 nodes=$(scontrol show hostnames $SLURM_JOB_NODELIST) # Getting the node names
 nodes_array=( $nodes )
-worker_num=$(($SLURM_JOB_NUM_NODES - 1))
-
 master_node=${nodes_array[0]}
+master_addr=$(srun --nodes=1 --ntasks=1 -w $master_node hostname --ip-address)
 
+worker_num=$(($SLURM_JOB_NUM_NODES - 1))
 for ((  i=0; i<=$worker_num; i++ ))
 do
   node_i=${nodes_array[$i]}
-  srun --nodes=1 --ntasks=1 -w $node_i python -m torch.distributed.launch --nproc_per_node=8 --nnodes=8 --node_rank=$i --master_addr=$master_node train.py --run_num=13 &
+  srun --nodes=1 --ntasks=1 -w $node_i python -m torch.distributed.launch --nproc_per_node=8 --nnodes=$SLURM_JOB_NUM_NODES --node_rank=$i --master_addr=$master_addr train.py --run_num=13 &
   pids[${i}]=$!
   echo "Training started on node $i"
 done
